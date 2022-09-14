@@ -20,7 +20,7 @@ Download and install gazebo. You can go to the website : http://gazebosim.org/in
     ```
     mkdir -p ~/scout_ws/src
     cd ~/scout_ws/src
-    git clone --recurse-submodules https://github.com/hjinnkim/BTS_scout_mini.git
+    git clone --recurse-submodules https://github.com/Pseudo-Tesla/BTS_scout_mini.git
     ```
 
 3.  **Install required ROS packages**
