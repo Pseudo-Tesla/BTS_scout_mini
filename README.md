@@ -95,4 +95,44 @@ Download and install gazebo. You can go to the website : http://gazebosim.org/in
     ```
 
 ### ** 4. 3D navigation**
-To be added
+1. **RTAB MAP**
+
+
+    a. Start roscore in master computer
+    ```
+    roscore
+    ```
+    b. Start Can connection and bring up scout_mini 
+    ```
+    rosrun scout_bringup bringup_can2usb.bash
+    ```
+    ```
+    roslaunch scout_bringup scout_mini_robot_base.launch
+    ```
+    c. Start realsense bringup and imu filter 
+    ```
+    roslaunch realsense2_camera rs_camera.launch align_depth:=true unite_imu_method:="linear_interpolation" enable_gyro:=true enable_accel:=true
+    ```
+    ```
+    rosrun imu_filter_madgwick imu_filter_node _use_mag:=false _publish_tf:=false _world_frame:="enu" /imu/data_raw:=/camera/imu /imu/data:=/rtabmap/imu
+    ```
+    d. RTAB MAP launch
+    ```
+    roslaunch rtabmap_ros rtabmap.launch rtabmap_args:="--delete_db_on_start --Optimizer/GravitySigma 0.3 --Grid/Sensor 1 --Vis/CorGuessWinSize 60 --Odom/FilteringStrategy 0 --" depth_topic:=/camera/aligned_depth_to_color/image_raw rgb_topic:=/camera/color/image_raw camera_info_topic:=/camera/color/camera_info approx_sync:=false wait_imu_to_init:=true imu_topic:=/rtabmap/imu 
+    ```
+    d.1 smooth(parameter tuning)
+    ```
+    roslaunch rtabmap_ros rtabmap.launch rtabmap_args:="--delete_db_on_start --Optimizer/GravitySigma 0.3 --Grid/Sensor 1 --Grid/CellSize 0.07 --Grid/3D false --Vis/CorGuessWinSize 60 Odom/Strategy 0 --Odom/FilteringStrategy 0 --OdomF2M/MaxSize 5000 --OdomF2M/ScanMaxSize 5000 --Odom/ResetCountdown 1--" depth_topic:=/camera/aligned_depth_to_color/image_raw rgb_topic:=/camera/color/image_raw camera_info_topic:=/camera/color/camera_info approx_sync:=false wait_imu_to_init:=true imu_topic:=/rtabmap/imu
+     ```
+2. **Map Save**
+
+    a. Go to socut_slam, save the map (Orin)
+    ```
+    rosrun map_server map_saver -f /home/orin/catkin_ws/src/scout_bringup/scout_slam/maps/map2 map:=/rtabmap/grid_map
+    ```
+3. **Navigation**
+
+    a. Navigation (Orin)
+    ```
+    roslaunch scout_navigation scout_navigation.launch
+    ```
